@@ -1,28 +1,45 @@
 #!/bin/bash
 
-# install jenkins
+sudo su
 
-sudo yum update
-sudo wget -O /etc/yum.repos.d/jenkins.repo \
-    https://pkg.jenkins.io/redhat-stable/jenkins.repo
-sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
-sudo yum upgrade -y
-sudo amazon-linux-extras install java-openjdk11 -y
-sudo yum install jenkins -y
-sudo systemctl enable jenkins
-sudo systemctl start jenkins
+# Update packages
+sudo yum update -y
 
-# install git
+# Install git
 sudo yum install git -y
 
-# install terraform
+# Install wget
+sudo yum install -y wget unzip
 
-sudo yum install -y yum-utils
-sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
-sudo yum -y install terraform
+# Add Jenkins repository
+sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
 
-# install kubectl
+# Import key file
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
 
-sudo curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.23.6/bin/linux/amd64/kubectl
-sudo chmod +x ./kubectl
-sudo mkdir -p $HOME/bin && sudo cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+# Upgrade packages
+sudo yum upgrade -y
+
+# Install Java
+sudo amazon-linux-extras install java-openjdk11 -y
+
+# Install Teraform
+sudo wget https://releases.hashicorp.com/terraform/1.0.8/terraform_1.0.8_linux_amd64.zip
+sudo unzip terraform_1.0.8_linux_amd64.zip -d /usr/local/bin/
+sudo rm terraform_1.0.8_linux_amd64.zip
+sudo echo "export PATH=$PATH:/usr/local/bin" >> ~/.bashrc
+
+# Install Jenkins
+sudo yum install jenkins -y
+
+# Enable Jenkins service to start at boot
+sudo systemctl enable jenkins
+
+# Start Jenkins as a service
+sudo systemctl start jenkins
+
+# remove ask for password
+echo 'jenkins ALL=(ALL) NOPASSWD:ALL' | sudo tee -a /etc/sudoers
+
+# Check the status of the Jenkins service
+sudo systemctl status jenkins
