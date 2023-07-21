@@ -43,3 +43,6 @@ echo 'jenkins ALL=(ALL) NOPASSWD:ALL' | sudo tee -a /etc/sudoers
 
 # Check the status of the Jenkins service
 sudo systemctl status jenkins
+
+# change hostname
+sudo hostnamectl set-hostname My-Jenkins-Server
